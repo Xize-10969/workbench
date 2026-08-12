@@ -4,7 +4,7 @@
  * 实现离线缓存，断网也能正常打开 App
  */
 
-const CACHE_NAME = 'workbench-v1';
+const CACHE_NAME = 'workbench-v2';
 const FILES = [
   './',
   './index.html',
@@ -43,4 +43,3 @@ self.addEventListener('activate', e => {
 });
 ```
 
----
