@@ -1,3 +1,4 @@
+
 ```javascript
 /**
  * 姜宁的工作台 - 核心逻辑
@@ -1338,3 +1339,6 @@ if (document.readyState === 'loading') {
     initApp();
 }
 ```
+
+---
+
