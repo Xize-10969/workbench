@@ -1,3 +1,5 @@
+
+```javascript
 /**
  * 姜宁的工作台 - 核心逻辑
  * 纯前端应用，数据存储于 localStorage
@@ -1268,29 +1270,67 @@ function resetData() {
 // ==================== 初始化 ====================
 
 /**
- * 应用初始化
+ * 应用初始化（带容错）
  */
 function initApp() {
-    loadData();
-    dailySettlement();
-    weeklySettlement();
-    
-    // 检查生命值警告
-    if (DB.pet.alive && DB.pet.hp <= PET_DANGER_HP) {
-        setTimeout(() => {
-            showToast(`⚠️ ${DB.pet.name}生命值危险！请连续2天打卡恢复`, 'warning');
-        }, 500);
+    try {
+        loadData();
+    } catch(e) {
+        console.error('loadData 错误:', e);
+        DB = getDefaultData();
+        saveData();
     }
     
-    renderAll();
+    try {
+        dailySettlement();
+    } catch(e) { console.error('dailySettlement 错误:', e); }
+    
+    try {
+        weeklySettlement();
+    } catch(e) { console.error('weeklySettlement 错误:', e); }
+    
+    // 检查生命值警告
+    try {
+        if (DB.pet.alive && DB.pet.hp <= PET_DANGER_HP) {
+            setTimeout(() => {
+                showToast(`⚠️ ${DB.pet.name}生命值危险！请连续2天打卡恢复`, 'warning');
+            }, 500);
+        }
+    } catch(e) { console.error('警告检查错误:', e); }
+    
+    try {
+        renderAll();
+    } catch(e) { console.error('renderAll 错误:', e); }
     
     // 点击遮罩关闭弹窗
-    document.querySelectorAll('.modal-overlay').forEach(m => {
-        m.addEventListener('click', (e) => {
-            if (e.target === m) m.classList.remove('active');
+    try {
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', (e) => {
+                if (e.target === m) m.classList.remove('active');
+            });
         });
-    });
+    } catch(e) { console.error('弹窗绑定错误:', e); }
 }
+
+// 暴露所有函数到全局作用域（防止被误隔离）
+window.showAddTaskModal = showAddTaskModal;
+window.editTask = editTask;
+window.saveTask = saveTask;
+window.toggleTask = toggleTask;
+window.deleteTask = deleteTask;
+window.checkIn = checkIn;
+window.feedPet = feedPet;
+window.switchPage = switchPage;
+window.showAddGoalModal = showAddGoalModal;
+window.editGoal = editGoal;
+window.saveGoal = saveGoal;
+window.toggleGoal = toggleGoal;
+window.deleteGoal = deleteGoal;
+window.closeModal = closeModal;
+window.exportData = exportData;
+window.importData = importData;
+window.resetData = resetData;
+window.claimNewPet = claimNewPet;
 
 // DOM 加载完成后初始化
 if (document.readyState === 'loading') {
@@ -1301,3 +1341,55 @@ if (document.readyState === 'loading') {
 ```
 
 ---
+
+## 文件 1/2：`sw.js`
+
+在 GitHub 中打开 `sw.js` → 点✏️编辑 → 全选删除 → 粘贴以下内容：
+
+```javascript
+/**
+ * 姜宁的工作台 - Service Worker
+ * 实现离线缓存，断网也能正常打开 App
+ */
+
+const CACHE_NAME = 'workbench-v2';
+const FILES = [
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './manifest.json'
+];
+
+// 安装时缓存所有文件
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES))
+  );
+  self.skipWaiting();
+});
+
+// 拦截请求，优先用缓存
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(response => {
+      return response || fetch(e.request);
+    })
+  );
+});
+
+// 更新缓存
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      );
+    })
+  );
+  self.clients.claim();
+});
+```
+
+---
+
