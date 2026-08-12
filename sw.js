@@ -1,45 +1,44 @@
 ```javascript
 /**
- * 姜宁的工作台 - Service Worker
- * 实现离线缓存，断网也能正常打开 App
+ * 姜宁的工作台 - Service Worker v3
+ * 策略：网络优先，缓存兜底（确保总是拿到最新版本）
  */
 
-const CACHE_NAME = 'workbench-v2';
-const FILES = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './manifest.json'
-];
+const CACHE_NAME = 'workbench-v3';
 
-// 安装时缓存所有文件
+// 安装时跳过等待，立即激活
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES))
-  );
   self.skipWaiting();
 });
 
-// 拦截请求，优先用缓存
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(response => {
-      return response || fetch(e.request);
-    })
-  );
-});
-
-// 更新缓存
+// 激活时清除所有旧缓存
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys => {
       return Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        keys.map(k => caches.delete(k))
       );
     })
   );
   self.clients.claim();
 });
-```
 
+// 网络优先策略：先从网络获取，失败时才用缓存
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    fetch(e.request)
+      .then(response => {
+        // 成功从网络获取，复制一份到缓存
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(e.request, clone);
+        });
+        return response;
+      })
+      .catch(() => {
+        // 网络失败，尝试从缓存读取
+        return caches.match(e.request);
+      })
+  );
+});
+```
