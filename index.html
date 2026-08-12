@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="姜宁的工作台">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <title>姜宁的工作台</title>
+</head>
+<body>
+    <div id="app">
+        <!-- 顶部导航栏 -->
+        <header class="app-header">
+            <h1 class="app-title" id="pageTitle">姜宁的工作台</h1>
+            <div class="header-pet-mini" id="headerPetMini">
+                <!-- 迷你狐狸状态 -->
+            </div>
+        </header>
+
+        <!-- 页面内容区 -->
+        <main class="app-content" id="appContent">
+            <!-- 今日页面 -->
+            <section class="page active" id="page-today">
+                <div class="today-date" id="todayDate"></div>
+                
+                <!-- 今日学习时长进度 -->
+                <div class="card progress-card">
+                    <div class="card-header">
+                        <span class="card-title">今日学习时长</span>
+                        <span class="card-value" id="todayHours">0h / 8h</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="todayProgress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-label" id="todayProgressLabel">还需 8 小时</div>
+                </div>
+
+                <!-- 今日任务列表 -->
+                <div class="card task-card">
+                    <div class="card-header">
+                        <span class="card-title">今日任务</span>
+                        <button class="btn-icon btn-add" onclick="showAddTaskModal()">+</button>
+                    </div>
+                    <div class="task-list" id="todayTaskList">
+                        <!-- 动态渲染 -->
+                    </div>
+                </div>
+
+                <!-- 打卡按钮 -->
+                <div class="checkin-section">
+                    <button class="btn-checkin" id="btnCheckin" onclick="checkIn()">
+                        <span class="checkin-icon">🍗</span>
+                        <span>完成打卡</span>
+                    </button>
+                    <div class="checkin-hint" id="checkinHint"></div>
+                </div>
+            </section>
+
+            <!-- 一周页面 -->
+            <section class="page" id="page-week">
+                <!-- 一周总览 -->
+                <div class="card week-overview">
+                    <div class="card-header">
+                        <span class="card-title">本周学习总览</span>
+                        <span class="card-value" id="weekTotalHours">0h</span>
+                    </div>
+                    <div class="week-progress-ring" id="weekProgressRing">
+                        <!-- SVG 环形进度 -->
+                    </div>
+                    <div class="week-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="weekActualHours">0h</span>
+                            <span class="stat-label">实际时长</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="weekRequiredHours">40h</span>
+                            <span class="stat-label">要求时长</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="weekCompletedTasks">0</span>
+                            <span class="stat-label">完成任务</span>
+                        </div>
+                    </div>
+                    <div class="week-status" id="weekStatus"></div>
+                </div>
+
+                <!-- 每日学习时长 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">每日学习时长</span>
+                    </div>
+                    <div class="daily-hours-list" id="dailyHoursList">
+                        <!-- 动态渲染7天 -->
+                    </div>
+                </div>
+
+                <!-- 一周目标任务 -->
+                <div class="card goal-card">
+                    <div class="card-header">
+                        <span class="card-title">一周目标任务</span>
+                        <button class="btn-icon btn-add" onclick="showAddGoalModal()">+</button>
+                    </div>
+                    <div class="goal-list" id="weeklyGoalList">
+                        <!-- 动态渲染 -->
+                    </div>
+                    <div class="goal-hint" id="goalHint"></div>
+                </div>
+            </section>
+
+            <!-- 宠物页面 -->
+            <section class="page" id="page-pet">
+                <div class="pet-container">
+                    <!-- 狐狸 SVG 展示区 -->
+                    <div class="pet-display" id="petDisplay">
+                        <!-- 动态渲染狐狸 -->
+                    </div>
+
+                    <!-- 生命值条 -->
+                    <div class="hp-section">
+                        <div class="hp-label">
+                            <span id="petName">小红狐</span>
+                            <span id="petHpText">100%</span>
+                        </div>
+                        <div class="hp-bar">
+                            <div class="hp-fill" id="hpFill" style="width: 100%"></div>
+                        </div>
+                        <div class="hp-status" id="hpStatus">精力充沛</div>
+                    </div>
+
+                    <!-- 鸡腿库存 -->
+                    <div class="chicken-section">
+                        <div class="chicken-count">
+                            <span class="chicken-icon">🍗</span>
+                            <span id="chickenCount">0</span>
+                            <span class="chicken-label">个鸡腿</span>
+                        </div>
+                        <button class="btn-feed" id="btnFeed" onclick="feedPet()">
+                            喂食鸡腿
+                        </button>
+                    </div>
+
+                    <!-- 状态提示 -->
+                    <div class="pet-message" id="petMessage">
+                        <!-- 动态消息 -->
+                    </div>
+
+                    <!-- 领取新宠物 -->
+                    <div class="new-pet-section" id="newPetSection" style="display:none;">
+                        <button class="btn-new-pet" onclick="claimNewPet()">
+                            领取新宠物
+                        </button>
+                        <div class="recovery-progress" id="recoveryProgress"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 设置页面 -->
+            <section class="page" id="page-settings">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">数据管理</span>
+                    </div>
+                    <button class="btn-settings" onclick="exportData()">导出数据</button>
+                    <button class="btn-settings" onclick="document.getElementById('importFile').click()">导入数据</button>
+                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                    <button class="btn-settings btn-danger" onclick="resetData()">重置所有数据</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">关于</span>
+                    </div>
+                    <div class="about-info">
+                        <p><strong>姜宁的工作台</strong></p>
+                        <p>版本 1.0</p>
+                        <p>你的专属学习伙伴</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部 Tab 导航 -->
+        <nav class="tab-bar">
+            <button class="tab-item active" data-page="today" onclick="switchPage('today')">
+                <span class="tab-icon">📋</span>
+                <span class="tab-label">今日</span>
+            </button>
+            <button class="tab-item" data-page="week" onclick="switchPage('week')">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">一周</span>
+            </button>
+            <button class="tab-item" data-page="pet" onclick="switchPage('pet')">
+                <span class="tab-icon">🦊</span>
+                <span class="tab-label">宠物</span>
+            </button>
+            <button class="tab-item" data-page="settings" onclick="switchPage('settings')">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-label">设置</span>
+            </button>
+        </nav>
+
+        <!-- 添加任务弹窗 -->
+        <div class="modal-overlay" id="taskModal">
+            <div class="modal">
+                <h3 class="modal-title">添加学习任务</h3>
+                <div class="modal-body">
+                    <input type="hidden" id="taskId">
+                    <div class="form-group">
+                        <label>任务名称</label>
+                        <input type="text" id="taskName" placeholder="如：学习Transformer原理" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label>学习时长（小时）</label>
+                        <input type="number" id="taskDuration" placeholder="如：2" min="0.5" max="24" step="0.5">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-modal btn-cancel" onclick="closeModal('taskModal')">取消</button>
+                    <button class="btn-modal btn-confirm" onclick="saveTask()">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加目标弹窗 -->
+        <div class="modal-overlay" id="goalModal">
+            <div class="modal">
+                <h3 class="modal-title">添加一周目标</h3>
+                <div class="modal-body">
+                    <input type="hidden" id="goalId">
+                    <div class="form-group">
+                        <label>目标名称</label>
+                        <input type="text" id="goalName" placeholder="如：第一篇文献阅读" maxlength="50">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-modal btn-cancel" onclick="closeModal('goalModal')">取消</button>
+                    <button class="btn-modal btn-confirm" onclick="saveGoal()">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast 提示 -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- Service Worker 注册（离线缓存） -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log('Service Worker 已注册，支持离线使用'))
+          .catch(err => console.log('Service Worker 注册失败:', err));
+      }
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
