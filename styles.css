@@ -1,0 +1,985 @@
+/* ==================== 全局变量 ==================== */
+:root {
+    --primary: #FF6B35;
+    --primary-light: #FF8F5E;
+    --primary-dark: #E55100;
+    --bg: #FFF8F0;
+    --card-bg: #FFFFFF;
+    --text: #2D3436;
+    --text-light: #636E72;
+    --text-lighter: #B2BEC3;
+    --border: #FFE0CC;
+    --success: #00B894;
+    --danger: #E84393;
+    --warning: #FDCB6E;
+    --shadow: 0 2px 12px rgba(255, 107, 53, 0.12);
+    --shadow-lg: 0 4px 24px rgba(255, 107, 53, 0.2);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --tab-height: 64px;
+}
+
+/* ==================== Reset ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* ==================== 顶部导航栏 ==================== */
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    flex-shrink: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+.app-title {
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.header-pet-mini {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 22px;
+}
+
+.header-pet-mini .mini-hp {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+/* ==================== 主内容区 ==================== */
+.app-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    padding-bottom: calc(var(--tab-height) + 16px);
+    -webkit-overflow-scrolling: touch;
+}
+
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== 卡片 ==================== */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.card-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* ==================== 进度条 ==================== */
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.progress-label {
+    font-size: 13px;
+    color: var(--text-light);
+    text-align: center;
+}
+
+/* ==================== 今日日期 ==================== */
+.today-date {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+/* ==================== 任务列表 ==================== */
+.task-list, .goal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid transparent;
+    transition: all 0.2s;
+}
+
+.task-item.completed {
+    border-color: var(--success);
+    background: #F0FFF8;
+}
+
+.task-item .task-check {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2.5px solid var(--text-lighter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: transparent;
+}
+
+.task-item.completed .task-check {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+
+.task-item .task-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-item .task-name {
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.task-item.completed .task-name {
+    text-decoration: line-through;
+    color: var(--text-lighter);
+}
+
+.task-item .task-duration {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.task-item .task-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.task-item .task-actions button {
+    border: none;
+    background: transparent;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.task-item .task-actions button:active {
+    background: rgba(0,0,0,0.06);
+}
+
+/* ==================== 按钮通用 ==================== */
+.btn-icon {
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.btn-icon:active {
+    transform: scale(0.9);
+}
+
+/* ==================== 打卡按钮 ==================== */
+.checkin-section {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.btn-checkin {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.15s;
+}
+
+.btn-checkin:active {
+    transform: scale(0.97);
+}
+
+.btn-checkin:disabled {
+    opacity: 0.5;
+    background: var(--text-lighter);
+    box-shadow: none;
+}
+
+.btn-checkin .checkin-icon {
+    font-size: 22px;
+}
+
+.checkin-hint {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-light);
+    min-height: 18px;
+}
+
+/* ==================== 一周统计 ==================== */
+.week-overview {
+    text-align: center;
+}
+
+.week-progress-ring {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+}
+
+.week-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.week-status {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.week-status.success {
+    background: #F0FFF8;
+    color: var(--success);
+}
+
+.week-status.warning {
+    background: #FFF8E1;
+    color: var(--warning);
+}
+
+/* 每日学习时长列表 */
+.daily-hours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.daily-hour-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+}
+
+.daily-hour-item .day-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.daily-hour-item .day-hours {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.daily-hour-item .day-status {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.daily-hour-item .day-status.done {
+    background: #F0FFF8;
+    color: var(--success);
+}
+
+.daily-hour-item .day-status.pending {
+    background: #FFF8E1;
+    color: var(--warning);
+}
+
+.daily-hour-item .day-status.missed {
+    background: #FFF0F0;
+    color: var(--danger);
+}
+
+.daily-hour-item.today {
+    border: 2px solid var(--primary);
+    background: #FFF5F0;
+}
+
+/* 一周目标 */
+.goal-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid transparent;
+}
+
+.goal-item.completed {
+    border-color: var(--success);
+    background: #F0FFF8;
+}
+
+.goal-item .goal-check {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 2.5px solid var(--text-lighter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: transparent;
+}
+
+.goal-item.completed .goal-check {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+
+.goal-item .goal-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.goal-item.completed .goal-name {
+    text-decoration: line-through;
+    color: var(--text-lighter);
+}
+
+.goal-item .goal-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.goal-item .goal-actions button {
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.goal-hint {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+    padding: 8px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+}
+
+/* ==================== 宠物页面 ==================== */
+.pet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pet-display {
+    width: 200px;
+    height: 200px;
+    margin: 20px 0 24px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pet-display svg {
+    width: 100%;
+    height: 100%;
+}
+
+.pet-display.dead {
+    filter: grayscale(0.8);
+    opacity: 0.6;
+}
+
+.pet-display.danger {
+    animation: shake 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes shake {
+    0% { transform: rotate(-3deg) translateY(0); }
+    100% { transform: rotate(3deg) translateY(-4px); }
+}
+
+.pet-display.happy .fox-body {
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* 生命值条 */
+.hp-section {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.hp-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.hp-bar {
+    width: 100%;
+    height: 20px;
+    background: #FFDADA;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.hp-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease, background 0.3s;
+    position: relative;
+}
+
+.hp-fill.high { background: linear-gradient(90deg, #00B894, #55EFC4); }
+.hp-fill.mid { background: linear-gradient(90deg, #FDCB6E, #FFEAA7); }
+.hp-fill.low { background: linear-gradient(90deg, #E84393, #FAB1C7); animation: pulse 0.8s ease-in-out infinite; }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.hp-status {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.hp-status.warning {
+    color: var(--danger);
+    font-weight: 600;
+    animation: pulse 1s infinite;
+}
+
+/* 鸡腿库存 */
+.chicken-section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.chicken-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chicken-icon {
+    font-size: 24px;
+}
+
+.chicken-label {
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+.btn-feed {
+    padding: 10px 24px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.15s;
+}
+
+.btn-feed:active {
+    transform: scale(0.95);
+}
+
+.btn-feed:disabled {
+    opacity: 0.4;
+    background: var(--text-lighter);
+}
+
+/* 宠物消息 */
+.pet-message {
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 12px;
+    min-height: 20px;
+}
+
+.pet-message.info { background: #F0F0FF; color: #6C5CE7; }
+.pet-message.warning { background: #FFF0F0; color: var(--danger); }
+.pet-message.success { background: #F0FFF8; color: var(--success); }
+
+/* 领取新宠物 */
+.new-pet-section {
+    width: 100%;
+    text-align: center;
+    margin-top: 16px;
+}
+
+.btn-new-pet {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--success), #00D9A6);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+    transition: transform 0.15s;
+    margin-bottom: 12px;
+}
+
+.btn-new-pet:disabled {
+    opacity: 0.4;
+}
+
+.btn-new-pet:active {
+    transform: scale(0.97);
+}
+
+.recovery-progress {
+    font-size: 13px;
+    color: var(--text-light);
+    padding: 10px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+}
+
+.recovery-progress .recovery-week {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.recovery-progress .recovery-week-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+}
+
+.recovery-progress .recovery-week-dot.done {
+    background: var(--success);
+}
+
+/* ==================== 设置 ==================== */
+.btn-settings {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-settings:active {
+    background: var(--border);
+}
+
+.btn-settings.btn-danger {
+    color: var(--danger);
+    background: #FFF0F0;
+}
+
+.about-info {
+    text-align: center;
+    padding: 12px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.about-info p {
+    margin-bottom: 4px;
+}
+
+/* ==================== 底部 Tab 导航 ==================== */
+.tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 500px;
+    height: var(--tab-height);
+    display: flex;
+    background: #fff;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+    z-index: 100;
+    border-top: 1px solid var(--border);
+}
+
+.tab-item {
+    flex: 1;
+    border: none;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: color 0.2s;
+    color: var(--text-lighter);
+}
+
+.tab-item.active {
+    color: var(--primary);
+}
+
+.tab-icon {
+    font-size: 22px;
+}
+
+.tab-label {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* ==================== 弹窗 ==================== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.2s;
+}
+
+.modal {
+    background: #fff;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-body {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    background: var(--bg);
+    transition: border 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-modal {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.btn-modal:active {
+    transform: scale(0.97);
+}
+
+.btn-cancel {
+    background: var(--bg);
+    color: var(--text-light);
+}
+
+.btn-confirm {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* ==================== Toast ==================== */
+.toast {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    background: rgba(45, 52, 54, 0.92);
+    color: #fff;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    max-width: 90%;
+    text-align: center;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.warning {
+    background: var(--warning);
+    color: var(--text);
+}
+
+.toast.danger {
+    background: var(--danger);
+}
+
+.toast.success {
+    background: var(--success);
+}
+
+/* ==================== 鸡腿飞出动画 ==================== */
+.chicken-flying {
+    position: fixed;
+    font-size: 40px;
+    z-index: 500;
+    pointer-events: none;
+    animation: flyToPet 1s ease-in-out forwards;
+}
+
+@keyframes flyToPet {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5) translateY(-100px);
+    }
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-lighter);
+    font-size: 14px;
+}
+
+.empty-state .empty-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* ==================== 迷你狐狸 SVG ==================== */
+.mini-fox-svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* ==================== 滚动条隐藏 ==================== */
+.app-content::-webkit-scrollbar {
+    width: 0;
+    display: none;
+}
+```
+
+---
